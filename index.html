@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Media - Abbalove Bali</title>
+    <!-- Favicon Update -->
+    <link rel="icon" type="image/png" href="https://i.ibb.co.com/YFNydDhq/logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .bg-overlay {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.85)), 
+                        url('https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .transition-all {
+            transition: all 0.3s ease;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 3px solid #fff;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen">
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-x-full transition-transform duration-300">
+        <div id="toast-content" class="px-6 py-3 rounded-lg shadow-xl flex items-center gap-3">
+            <span id="toast-icon"></span>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <!-- HOME MENU -->
+        <section id="view-home" class="flex-1 flex flex-col items-center justify-center p-6 bg-overlay text-center">
+            <div class="max-w-3xl animate-fade-in flex flex-col items-center">
+                <!-- Added Logo and Subtitle -->
+                <img src="https://i.ibb.co.com/YFNydDhq/logo.png" alt="Abbalove Logo" class="w-20 h-20 mb-3 object-contain drop-shadow-lg">
+                <p class="text-xs md:text-sm tracking-[0.3em] uppercase text-blue-400 font-bold mb-4">Abbalove Ministries Bali</p>
+                
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 tracking-tight">TRAINING <span class="text-blue-500">MEDIA</span></h1>
+                
+                <!-- Updated Bible Verse -->
+                <p class="text-lg md:text-xl text-gray-300 mb-12 italic max-w-2xl leading-relaxed">
+                    "Apapun juga yang kamu perbuat, perbuatlah dengan segenap hatimu seperti untuk Tuhan dan bukan untuk manusia."<br>
+                    <span class="text-white font-bold not-italic text-sm md:text-base mt-2 block">— Kolose 3:23</span>
+                </p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-md mx-auto">
+                    <button onclick="showView('view-form')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-2xl transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20">
+                        <i data-lucide="user-plus"></i> Form Pendaftaran
+                    </button>
+                    <button onclick="showSchedule()" class="bg-white/10 hover:bg-white/20 text-white font-semibold py-4 px-6 rounded-2xl glass transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="calendar"></i> Jadwal Training
+                    </button>
+                    <button onclick="showView('view-login')" class="md:col-span-2 mt-4 text-gray-400 hover:text-white transition-all text-sm flex items-center justify-center gap-1">
+                        <i data-lucide="lock" class="w-4 h-4"></i> Admin Login
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FORM PENDAFTARAN -->
+        <section id="view-form" class="hidden flex-1 p-6 bg-slate-950">
+            <div class="max-w-2xl mx-auto py-10">
+                <button onclick="showView('view-home')" class="mb-6 flex items-center gap-2 text-gray-400 hover:text-white transition-all">
+                    <i data-lucide="arrow-left" class="w-5 h-5"></i> Kembali Ke Home
+                </button>
+                
+                <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl">
+                    <h2 class="text-3xl font-bold mb-6">Pendaftaran Peserta</h2>
+                    <form id="registration-form" class="space-y-5">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Nama Lengkap</label>
+                                <input type="text" name="nama_lengkap" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Nama Panggilan</label>
+                                <input type="text" name="nama_panggilan" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">Tanggal Lahir</label>
+                                <input type="date" name="tgl_lahir" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-400 mb-2">No HP / WA (Aktif)</label>
+                                <input type="tel" name="no_wa" placeholder="0812..." required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Area Ibadah / Pelayanan</label>
+                            <input type="text" name="area" placeholder="Contoh: Abbalove Bali" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Tertanam Dalam Komsel?</label>
+                            <select name="komsel" id="komsel-select" onchange="togglePKS(this.value)" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all appearance-none">
+                                <option value="tidak">Tidak</option>
+                                <option value="ya">Ya</option>
+                            </select>
+                        </div>
+
+                        <div id="pks-field" class="hidden animate-fade-in">
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Nama PKS (Pemimpin Komsel)</label>
+                            <input type="text" name="pks" id="pks-input" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 outline-none transition-all">
+                        </div>
+
+                        <button type="submit" id="btn-submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl mt-4 transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-900/40">
+                            Kirim Pendaftaran
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN LOGIN -->
+        <section id="view-login" class="hidden flex-1 flex items-center justify-center p-6 bg-slate-950">
+            <div class="max-w-md w-full">
+                <div class="bg-slate-900 rounded-3xl p-8 border border-slate-800 shadow-2xl">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Admin Access</h2>
+                    <form id="login-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Username</label>
+                            <input type="text" name="username" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm text-gray-400 mb-1">Password</label>
+                            <input type="password" name="password" required class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all">
+                        </div>
+                        <button type="submit" id="btn-login" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all">
+                            Login
+                        </button>
+                        <button type="button" onclick="showView('view-home')" class="w-full text-gray-500 text-sm mt-2">Batal</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN DASHBOARD -->
+        <section id="view-admin" class="hidden flex-1 p-6 bg-slate-950 overflow-auto">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h2 class="text-3xl font-bold">Data Pendaftar</h2>
+                        <p class="text-gray-400">Manajemen peserta Training Media</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="logout()" class="bg-red-500/10 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500/20 transition-all text-sm font-medium">Logout</button>
+                        <button onclick="refreshData()" class="bg-slate-800 px-4 py-2 rounded-lg hover:bg-slate-700 transition-all text-sm flex items-center gap-2">
+                            <i data-lucide="rotate-cw" class="w-4 h-4"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-800/50 border-bottom border-slate-800">
+                                    <th class="p-4 font-semibold text-gray-300 text-sm">Nama Lengkap</th>
+                                    <th class="p-4 font-semibold text-gray-300 text-sm">Area</th>
+                                    <th class="p-4 font-semibold text-gray-300 text-sm">No WA</th>
+                                    <th class="p-4 font-semibold text-gray-300 text-sm">Komsel</th>
+                                    <th class="p-4 font-semibold text-gray-300 text-sm text-center">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendaftar-table-body">
+                                <!-- Data will be injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="loading-table" class="hidden p-10 flex flex-col items-center justify-center text-gray-500">
+                        <div class="spinner mb-4"></div>
+                        Memuat data...
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MODAL JADWAL -->
+    <div id="modal-schedule" class="fixed inset-0 z-50 flex items-center justify-center p-6 hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-3xl p-8 relative z-10 animate-fade-in shadow-2xl">
+            <div class="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center text-blue-500 mb-6">
+                <i data-lucide="clock" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-2xl font-bold mb-4">Jadwal Training</h3>
+            <div class="space-y-4 text-gray-300">
+                <div class="flex gap-4">
+                    <i data-lucide="calendar" class="w-5 h-5 text-blue-500"></i>
+                    <p>Setiap Hari Minggu</p>
+                </div>
+                <div class="flex gap-4">
+                    <i data-lucide="clock-3" class="w-5 h-5 text-blue-500"></i>
+                    <p>Jam 14.00 WITA</p>
+                </div>
+                <div class="flex gap-4">
+                    <i data-lucide="map-pin" class="w-5 h-5 text-blue-500"></i>
+                    <p>Abbalove Bali Lantai 3</p>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-xl mt-8 transition-all">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL EDIT DATA -->
+    <div id="modal-edit" class="fixed inset-0 z-50 flex items-center justify-center p-6 hidden">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeEditModal()"></div>
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-2xl rounded-3xl p-8 relative z-10 shadow-2xl overflow-auto max-h-[90vh]">
+            <h3 class="text-2xl font-bold mb-6">Edit Data Pendaftar</h3>
+            <form id="edit-form" class="space-y-4">
+                <input type="hidden" name="id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-500">Nama Lengkap</label>
+                        <input type="text" name="nama_lengkap" class="w-full bg-slate-800 border-none rounded-lg p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500">Nama Panggilan</label>
+                        <input type="text" name="nama_panggilan" class="w-full bg-slate-800 border-none rounded-lg p-2 text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-500">No HP/WA</label>
+                    <input type="text" name="no_wa" class="w-full bg-slate-800 border-none rounded-lg p-2 text-white">
+                </div>
+                <div class="flex gap-4">
+                    <button type="submit" class="flex-1 bg-blue-600 py-3 rounded-xl font-bold">Simpan Perubahan</button>
+                    <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-800 py-3 rounded-xl font-bold">Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURASI ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHvVLlOsBThQ3G0NgTidlnJxKIaMj1_Q0e1prin6q_XotQMkUCNeija5cpepEpER2W/exec"; 
+        
+        let currentUser = null;
+        let pendaftarData = [];
+
+        lucide.createIcons();
+
+        function showView(viewId) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            const target = document.getElementById(viewId);
+            target.classList.remove('hidden');
+            target.classList.add('animate-fade-in');
+            
+            if (viewId === 'view-admin' && !currentUser) {
+                showView('view-login');
+            }
+        }
+
+        function showSchedule() {
+            document.getElementById('modal-schedule').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-schedule').classList.add('hidden');
+        }
+
+        function togglePKS(val) {
+            const pksField = document.getElementById('pks-field');
+            const pksInput = document.getElementById('pks-input');
+            if (val === 'ya') {
+                pksField.classList.remove('hidden');
+                pksInput.required = true;
+            } else {
+                pksField.classList.add('hidden');
+                pksInput.required = false;
+            }
+        }
+
+        function notify(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const content = document.getElementById('toast-content');
+            const msgEl = document.getElementById('toast-message');
+            
+            msgEl.innerText = message;
+            content.className = `px-6 py-3 rounded-lg shadow-xl flex items-center gap-3 ${type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}`;
+            
+            toast.classList.remove('translate-x-full');
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 4000);
+        }
+
+        async function apiRequest(action, data = {}) {
+            if (SCRIPT_URL.includes("XXXXXXXXX")) {
+                return simulateAPI(action, data);
+            }
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action, ...data })
+                });
+                return await response.json();
+            } catch (err) {
+                console.error(err);
+                notify("Koneksi gagal ke server", "error");
+                return { success: false };
+            }
+        }
+
+        document.getElementById('registration-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-submit');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<div class="spinner"></div>`;
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const res = await apiRequest('register', data);
+            
+            if (res.success) {
+                notify("Pendaftaran Berhasil! Sampai jumpa di Training.");
+                e.target.reset();
+                showView('view-home');
+            } else {
+                notify("Pendaftaran gagal, coba lagi nanti.", "error");
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        };
+
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-login');
+            btn.disabled = true;
+            btn.innerText = "Authenticating...";
+
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const res = await apiRequest('login', data);
+
+            if (res.success) {
+                currentUser = data.username;
+                notify("Login Berhasil. Halo Admin!");
+                showView('view-admin');
+                refreshData();
+            } else {
+                notify("Username atau Password salah!", "error");
+            }
+
+            btn.disabled = false;
+            btn.innerText = "Login";
+        };
+
+        async function refreshData() {
+            const tableBody = document.getElementById('pendaftar-table-body');
+            const loading = document.getElementById('loading-table');
+            
+            tableBody.innerHTML = '';
+            loading.classList.remove('hidden');
+
+            const res = await apiRequest('getData');
+            loading.classList.add('hidden');
+
+            if (res.success) {
+                pendaftarData = res.data;
+                renderTable(pendaftarData);
+            }
+        }
+
+        function renderTable(data) {
+            const tableBody = document.getElementById('pendaftar-table-body');
+            tableBody.innerHTML = '';
+
+            if (data.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="5" class="p-10 text-center text-gray-500">Belum ada data pendaftar.</td></tr>`;
+                return;
+            }
+
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                row.className = "border-b border-slate-800/50 hover:bg-white/5 transition-all group";
+                row.innerHTML = `
+                    <td class="p-4">
+                        <div class="font-medium">${item.nama_lengkap}</div>
+                        <div class="text-xs text-gray-500 italic">@${item.nama_panggilan}</div>
+                    </td>
+                    <td class="p-4 text-sm text-gray-400">${item.area}</td>
+                    <td class="p-4 text-sm text-gray-400">${item.no_wa}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-md text-[10px] uppercase font-bold ${item.komsel === 'ya' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-amber-500/10 text-amber-500'}">
+                            ${item.komsel === 'ya' ? 'YA ('+item.pks+')' : 'TIDAK'}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex justify-center gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                            <button onclick="editData(${index})" class="p-2 bg-blue-500/10 text-blue-500 rounded-lg hover:bg-blue-500 hover:text-white transition-all">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i>
+                            </button>
+                            <button onclick="deleteData(${index})" class="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+            lucide.createIcons();
+        }
+
+        async function deleteData(index) {
+            const confirmed = confirm("Apakah Anda yakin ingin menghapus data ini?");
+            if (!confirmed) return;
+
+            const res = await apiRequest('delete', { id: index });
+            if (res.success) {
+                notify("Data berhasil dihapus");
+                refreshData();
+            }
+        }
+
+        function editData(index) {
+            const item = pendaftarData[index];
+            const form = document.getElementById('edit-form');
+            form.id.value = index;
+            form.nama_lengkap.value = item.nama_lengkap;
+            form.nama_panggilan.value = item.nama_panggilan;
+            form.no_wa.value = item.no_wa;
+            
+            document.getElementById('modal-edit').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('modal-edit').classList.add('hidden');
+        }
+
+        document.getElementById('edit-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+
+            const res = await apiRequest('update', data);
+            if (res.success) {
+                notify("Data diperbarui");
+                closeEditModal();
+                refreshData();
+            }
+        };
+
+        function logout() {
+            currentUser = null;
+            notify("Anda telah logout");
+            showView('view-home');
+        }
+
+        let mockDB = JSON.parse(localStorage.getItem('tm_mock_db')) || [];
+        function simulateAPI(action, data) {
+            return new Promise(resolve => {
+                setTimeout(() => {
+                    if (action === 'register') {
+                        mockDB.push(data);
+                        localStorage.setItem('tm_mock_db', JSON.stringify(mockDB));
+                        resolve({ success: true });
+                    } else if (action === 'login') {
+                        if (data.username === 'admin' && data.password === 'bali123') {
+                            resolve({ success: true });
+                        } else {
+                            resolve({ success: false });
+                        }
+                    } else if (action === 'getData') {
+                        resolve({ success: true, data: mockDB });
+                    } else if (action === 'delete') {
+                        mockDB.splice(data.id, 1);
+                        localStorage.setItem('tm_mock_db', JSON.stringify(mockDB));
+                        resolve({ success: true });
+                    } else if (action === 'update') {
+                        const id = data.id;
+                        delete data.id;
+                        mockDB[id] = { ...mockDB[id], ...data };
+                        localStorage.setItem('tm_mock_db', JSON.stringify(mockDB));
+                        resolve({ success: true });
+                    }
+                }, 600);
+            });
+        }
+    </script>
+</body>
+</html>
